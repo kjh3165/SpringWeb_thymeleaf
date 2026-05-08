@@ -16,7 +16,7 @@ public class PostController {
     @ResponseBody
     public String showWrite() {
         return """
-                <form action="/posts/doWrite" target="_blank">
+                <form action="/posts/doWrite" target="_blank" method="POST">
                   <input type="text" name="title" placeholder="제목" value="안녕">
                   <br>
                   <textarea name="content" placeholder="내용">반가워</textarea>
@@ -26,7 +26,7 @@ public class PostController {
                 """;
     }
 
-    @GetMapping("/posts/doWrite")
+    @PostMapping("/posts/doWrite")
     @ResponseBody
     @Transactional
     public String write(
