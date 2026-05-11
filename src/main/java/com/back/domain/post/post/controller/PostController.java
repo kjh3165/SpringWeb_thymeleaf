@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 @Controller
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/posts/write")
+    @GetMapping("/write")
     public String showWrite(@ModelAttribute("form") WriteForm form) {
         return "post/post/write";
     }
@@ -39,7 +40,7 @@ public class PostController {
         String content;
     }
 
-    @PostMapping("/posts/doWrite")
+    @PostMapping("/write")
     @Transactional
     public String write(
             @ModelAttribute("form") @Valid WriteForm form, BindingResult bindingResult, Model model
