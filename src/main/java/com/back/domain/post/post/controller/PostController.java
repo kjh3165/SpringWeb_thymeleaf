@@ -52,6 +52,15 @@ public class PostController {
 
         Post post = postService.write(form.getTitle(), form.getContent());
         model.addAttribute("post", post);
-        return "post/post/list";
+        return "redirect:/posts/detail/" + post.getId();
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable Integer id, Model model) {
+        Post post = postService.findById(id);
+        model.addAttribute("post", post);
+
+        return "post/post/detail";
     }
 }
