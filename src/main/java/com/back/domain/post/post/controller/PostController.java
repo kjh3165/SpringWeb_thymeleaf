@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts/write")
-    public String showWrite() {
+    public String showWrite(WriteForm form) {
         return "post/post/write";
     }
 
@@ -50,7 +50,7 @@ public class PostController {
                     .getFieldErrors()
                     .stream()
                     .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining("<br>"));
 
             model.addAttribute("errorMessage", errorMessage);
             return "post/post/write";
