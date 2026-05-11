@@ -1,7 +1,7 @@
-package com.back.domain.controller;
+package com.back.domain.post.post.controller;
 
-import com.back.domain.entity.Post;
-import com.back.domain.service.PostService;
+import com.back.domain.post.post.entity.Post;
+import com.back.domain.post.post.service.PostService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,9 +10,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -23,9 +23,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts/write")
-    @ResponseBody
     public String showWrite() {
-        return getWriteFormHtml("", "", "");
+        return "post/post/write";
     }
 
     @AllArgsConstructor
@@ -41,10 +40,9 @@ public class PostController {
     }
 
     @PostMapping("/posts/doWrite")
-    @ResponseBody
     @Transactional
     public String write(
-            @Valid WriteForm form, BindingResult bindingResult
+            @Valid WriteForm form, BindingResult bindingResult, Model model
 //        @ModelAttribute("writeForm") WriteForm form
     ) {
         if (bindingResult.hasErrors()) {
@@ -52,29 +50,14 @@ public class PostController {
                     .getFieldErrors()
                     .stream()
                     .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.joining("<br>"));
+                    .collect(Collectors.joining("\n"));
 
-            return getWriteFormHtml(errorMessage, form.getTitle(), form.getContent());
+            model.addAttribute("errorMessage", errorMessage);
+            return "post/post/write";
         }
 
         Post post = postService.write(form.getTitle(), form.getContent());
-        return "%d 번 글이 생성 되었습니다.".formatted(post.getId());
-    }
-
-    private String getWriteFormHtml(
-            String errorMessage,
-            String title,
-            String content
-    ) {
-        return """
-                <div style="color:red;">%s</div>
-                <form action="/posts/doWrite" method="POST">
-                  <input type="text" name="title" placeholder="제목" value="%s" autofocus>
-                  <br>
-                  <textarea name="content" placeholder="내용">%s</textarea>
-                  <br>
-                  <input type="submit" value="작성">
-                </form>
-                """.formatted(errorMessage, title, content);
+        model.addAttribute("post", post);
+        return "post/post/list";
     }
 }
