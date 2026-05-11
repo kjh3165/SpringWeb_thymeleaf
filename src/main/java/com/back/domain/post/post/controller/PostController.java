@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/posts/write")
-    public String showWrite() {
+    public String showWrite(@ModelAttribute("form") WriteForm form) {
         return "post/post/write";
     }
 
@@ -42,7 +42,7 @@ public class PostController {
     @PostMapping("/posts/doWrite")
     @Transactional
     public String write(
-            @Valid WriteForm form, BindingResult bindingResult, Model model
+            @ModelAttribute("form") @Valid WriteForm form, BindingResult bindingResult, Model model
 //        @ModelAttribute("writeForm") WriteForm form
     ) {
         if (bindingResult.hasErrors()) {
