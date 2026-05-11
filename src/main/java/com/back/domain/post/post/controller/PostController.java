@@ -47,13 +47,6 @@ public class PostController {
 //        @ModelAttribute("writeForm") WriteForm form
     ) {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult
-                    .getFieldErrors()
-                    .stream()
-                    .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.joining("<br>"));
-
-            model.addAttribute("errorMessage", errorMessage);
             return "post/post/write";
         }
 
