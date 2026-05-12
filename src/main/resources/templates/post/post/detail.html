@@ -5,6 +5,10 @@
     <p>[[${post.content}]]</p>
     <p>[[${post.author.username}]]</p>
 
+    <a th:href="@{|/posts/modify/${post.id}|}"
+       sec:authorize="isAuthenticated()"
+       th:if="${#authentication.name == post.author.username}"
+    >수정</a>
     <form sec:authorize="isAuthenticated()"
           th:if="${#authentication.name == post.author.username}"
           th:action="@{|/posts/delete/${post.id}|}"
