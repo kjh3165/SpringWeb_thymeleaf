@@ -1,5 +1,7 @@
 package com.back.domain.post.post.controller;
 
+import com.back.domain.member.member.entity.Member;
+import com.back.domain.member.member.service.MemberService;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import jakarta.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 @Controller
 public class PostController {
     private final PostService postService;
+    private final MemberService memberService;
 
     @GetMapping("/write")
     public String showWrite(@ModelAttribute("form") WriteForm form) {
@@ -44,14 +48,15 @@ public class PostController {
     @PostMapping("/write")
     @Transactional
     public String write(
-            @ModelAttribute("form") @Valid WriteForm form, BindingResult bindingResult, Model model
+            @ModelAttribute("form") @Valid WriteForm form, BindingResult bindingResult, Model model, Principal principal
 //        @ModelAttribute("writeForm") WriteForm form
     ) {
         if (bindingResult.hasErrors()) {
             return "post/post/write";
         }
-
-        Post post = postService.write(form.getTitle(), form.getContent());
+        String username = principal.getName();
+        Member author = memberService.findByUsername(username);
+        Post post = postService.write(author, form.getTitle(), form.getContent());
         model.addAttribute("post", post);
         return "redirect:/posts/detail/" + post.getId();
     }
