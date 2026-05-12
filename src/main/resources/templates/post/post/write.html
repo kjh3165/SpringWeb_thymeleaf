@@ -1,6 +1,5 @@
-<div style="color:red;" th:utext="${errorMessage}"></div>
-
-<form th:action="@{/posts/write}" method="POST" th:object="${form}">
+<html layout:decorate="~{/common/layout/layout}">
+<form layout:fragment="content" th:action="@{/posts/write}" method="POST" th:object="${form}">
     <div th:replace="~{/common/fragment/errors :: errorsFragment}"></div>
     <label for="title">제목</label>
     <input type="text" th:field="*{title}" placeholder="제목" autofocus>
@@ -10,3 +9,4 @@
     <br>
     <input type="submit" value="작성">
 </form>
+</html>
