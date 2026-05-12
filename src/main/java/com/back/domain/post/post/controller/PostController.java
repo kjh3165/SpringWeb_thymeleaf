@@ -52,7 +52,10 @@ public class PostController {
     @PostMapping("/write")
     @Transactional
     public String write(
-            @ModelAttribute("form") @Valid WriteForm form, BindingResult bindingResult, Model model, Principal principal
+            @ModelAttribute("form") @Valid WriteForm form,
+            BindingResult bindingResult,
+            Model model,
+            Principal principal
 //        @ModelAttribute("writeForm") WriteForm form
     ) {
         if (bindingResult.hasErrors()) {
@@ -101,7 +104,10 @@ public class PostController {
     @Transactional
     @GetMapping("/modify/{id}")
     public String showModify(
-            @PathVariable Integer id, @ModelAttribute("form") ModifyForm modifyForm, Model model, Principal principal
+            @PathVariable Integer id,
+            @ModelAttribute("form") ModifyForm modifyForm,
+            Model model,
+            Principal principal
     ) {
         Post post = postService.findById(id);
         if(!post.getAuthor().getUsername().equals(principal.getName())){
@@ -124,5 +130,27 @@ public class PostController {
         @NotBlank(message = "내용을 입력해주세요.")
         @Size(min = 2, max = 100, message = "내용은 2 ~ 100 자 이내로 입력해주세요.")
         String content;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @PostMapping("/modify/{id}")
+    public String modify(
+            @ModelAttribute("form") @Valid WriteForm form,
+            BindingResult bindingResult,
+            @PathVariable Integer id,
+            Principal principal
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "post/post/modify";
+        }
+
+        Post post = postService.findById(id);
+        if(!post.getAuthor().getUsername().equals(principal.getName())){
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        postService.modify(post, form.getTitle(), form.getContent());
+        return "redirect:/posts/detail/" + id;
     }
 }
