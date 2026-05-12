@@ -5,12 +5,12 @@
     <p>[[${post.content}]]</p>
     <p>[[${post.author.username}]]</p>
 
-    <div
-        sec:authorize="isAuthenticated()"
-        th:if="${post.author != null and #authentication.getPrincipal.getUsername() == post.author.username}"
-    >
-        <a th:href="@{|/posts/delete/${post.id}|}">삭제</a>
-    </div>
+    <form sec:authorize="isAuthenticated()"
+          th:if="${#authentication.name == post.author.username}"
+          th:action="@{|/posts/delete/${post.id}|}"
+          method="post">
+        <button type="submit">삭제</button>
+    </form>
     <div>
         <a href="/posts/list">글 목록</a>
     </div>

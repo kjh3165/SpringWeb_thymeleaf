@@ -82,7 +82,7 @@ public class PostController {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, Principal principal) {
         Post post = postService.findById(id);
         // 로그인 사용자가 작성자와 같은 유저인지 검증
